@@ -1,0 +1,37 @@
+Osmosis
+osmosis --read-xml file="input.osm" --bounding-polygon file="clip.poly" --write-xml file="output.osm";
+
+osmosis --rb india-latest.osm.pbf --tf reject-ways highway=* building=* landuse=* natural=* --wb extract_output.osm.pbf omitmetadata=true
+
+osmosis --rb extract_output.osm --tf reject-nodes amenity=* --wb reject_nodes.osm omitmetadata=true
+
+osmosis --rb extract_output.osm --tf reject-ways amenity=* --wb reject_ways.osm  omitmetadata=true
+
+osmosis extract.osm --tf reject-nodes amenity=* reject-ways andreject-nodes extract1.osm
+
+osmosis --read-xml india-latest.osm.pbf --tf reject-ways highway=* building=* landuse=* natural=* --used-node --write-xml output.osm
+
+reject-nodes amenity=* reject-ways and reject-nodes
+Osmium
+#object by id
+osmium getid airliftpakistan1472793774974308352.osm.pbf -r w
+
+#tag filter
+osmium tags-filter park.osm.pbf wr/natural=wood wr/landuse=forest \ -o wooded-areas.osm.pbf
+
+OSMConvert
+#converting file
+osmconvert inputfile.osm.pbf --complete-ways > converted.osm
+
+#clipping
+osmconvert input.osm.pbf -B=clip.poly --complete-ways >> clippedoutput.osm
+	
+#Create Database
+createdb -U postgres Hyderabad
+psql -U postgres -d Hyderabad -c 'CREATE EXTENSION postgis; CREATE EXTENSION hstore;'
+
+#Load data
+psql -U postgres -d {dbname} -f datafile.sql
+osm2pgsql -s -U postgres -W -d {dbname} -H localhost --hstore-all --extra-attributes datafile.osm
+
+

@@ -1,0 +1,33 @@
+z_order
+admin_levels in osm
+
+COUNT()
+nodes-2134163
+point-55657
+
+ways-362345
+line-256495
+roads-10317
+
+polygon-106929
+
+relations-1741
+
+fields
+point - osm_id,tags,geometry
+nodes - id,lat,lon
+
+ways - id,nodes,tags
+line - osm_id,tags,geometry
+roads - osm_id,tags,geometry
+
+polygon - osm_id,tags,geometry
+relations - id,way_odd,rel_off,parts,members,tags
+
+
+
+
+
+
+
+

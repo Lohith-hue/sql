@@ -1,0 +1,17 @@
+--creates
+SELECT a.*,b.user_id,c.display_name FROM ways as a
+left join changesets as b on a.changeset_id=b.id
+left join users as c on c.id=user_id
+WHERE version = 1 AND display_name in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau','mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102','GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106','GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124','GNV125','GNV126','GNV127','GNV128','GNV129','GNV130','GNV131','GNV132','GNV133','GNV134','GNV135')
+
+--modify
+SELECT a.*,b.user_id,c.display_name FROM ways as a
+left join changesets as b on a.changeset_id=b.id
+left join users as c on c.id=user_id
+WHERE version > 1 AND display_name in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau','mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102','GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106','GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124','GNV125','GNV126','GNV127','GNV128','GNV129','GNV130','GNV131','GNV132','GNV133','GNV134','GNV135')
+
+--delete
+SELECT a.*,b.user_id,c.display_name FROM current_ways as a
+left join changesets as b on a.changeset_id=b.id
+left join users as c on c.id=user_id
+WHERE visible = false AND display_name in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau','mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102','GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106','GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124','GNV125','GNV126','GNV127','GNV128','GNV129','GNV130','GNV131','GNV132','GNV133','GNV134','GNV135')

@@ -1,0 +1,21 @@
+bzcat changesets-latest.osm.bz2 | head -- to read the text in the changeset file
+
+https://github.com/ToeBee/ChangesetMD -- Installation guide
+
+https://github.com/ToeBee/ChangesetMD/blob/master/changesetmd.py -- Changesetmd.py file (copy and store locally)
+
+osmcha <changeset_id> --gets the count of creates,modified and deleted objects
+
+osmium changeset-filter /home/joseph/grab/pbf_files/Changesets/changesets-191104.osm.bz2 -B=/home/joseph/grab/Poly_files/singapore_poly.poly -o /home/joseph/grab/pbf_files/Changesets/singapore-changesets.osm.bz2
+
+#create a database
+python /home/joseph/grab/pbf_files/Changesets/ChangesetMD-master/changesetmd.py -d changesets -c
+
+#load the changeset file to the created database
+python /home/joseph/grab/pbf_files/Changesets/ChangesetMD-master/changesetmd.py -d changesets -f /home/joseph/grab/pbf_files/Changesets/changesets-191104.osm.bz2
+
+#periodical updates
+python /home/joseph/grab/pbf_files/Changesets/ChangesetMD-master/changesetmd.py -d changesets -r
+
+
+/home/joseph/work/osmium-tool/build/osmium changeset-filter /home/joseph/grab/pbf_files/Changesets/changesets-191104.osm.bz2 -B=1.1954990,103.5666666,1.5013691,104.5078805 -o /home/joseph/grab/pbf_files/Changesets/singapore-changesets.osm.bz2

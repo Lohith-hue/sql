@@ -1,0 +1,11 @@
+SELECT st_y(st_astext(st_transform(ST_SetSRID(st_makepoint(n.lon / 10^7, n.lat / 10^7), 4326), 4326))::geometry) AS lat,
+	   st_x(st_astext(st_transform(ST_SetSRID(st_makepoint(n.lon / 10^7, n.lat / 10^7), 4326), 4326))::geometry) AS lng	
+		
+from(
+SELECT osm_id,hstore("tags")-> 'osm_user' as Name,planet_osm_nodes.lat,planet_osm_nodes.lon,hstore("tags")-> 'name' as Hospital_Name,
+hstore("tags")-> 'addr:full' as addr_full,hstore("tags")-> 'addr:postcode' as addr_postcode,hstore("tags")-> 'addr:district' as addr_district,
+hstore("tags")-> 'website' as Website,hstore("tags")-> 'amenity' as Amenity,hstore("tags")-> 'addr:city' as addr_city,
+hstore("tags")-> 'addr:state' as addr_state,hstore("tags")-> 'phone' as Telephone,hstore("tags")-> 'emergency' as emergency,
+hstore("tags")-> 'facility' as facility,hstore("tags")-> 'healthcare' as healthcare FROM planet_osm_point 
+INNER JOIN planet_osm_nodes ON planet_osm_point.osm_id = planet_osm_nodes.id
+WHERE hstore("tags")-> 'healthcare' is not null) as n

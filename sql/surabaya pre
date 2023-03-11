@@ -1,0 +1,100 @@
+
+
+--surbaya_pre
+CREATE TABLE current_merged_all_waysdata as 
+select a.id,a.timestamp,a.version,a.visible,a.changeset_id,c.display_name,d.k,d.v
+from
+(select id,timestamp,version,visible,changeset_id
+from current_ways) as a
+left join changesets as b
+on a.changeset_id=b.id
+left join users as c
+on b.user_id=c.id
+left join current_way_tags as d
+on a.id=d.way_id
+
+
+
+--surbaya public
+CREATE TABLE public_all_ways_data as 
+SELECT * FROM
+(SELECT id as way_id,hstore(tags)->'osm_user' as user,
+ hstore(tags)->'osm_timestamp'as timestamp,hstore(tags)->'osm_changeset' as changeset_id ,hstore(tags)->'osm_version' as version,
+ skeys(hstore(tags)) as keys,svals(hstore(tags)) as value
+ FROM planet_osm_ways) as a
+ WHERE keys not in ('osm_timestamp','osm_user','osm_uid','osm_changeset','osm_version')
+ 
+ 
+select *
+from (
+select *,
+case when team ='internal' and p_user=c_user and (p_timestamp = c_timestamp or p_timestamp < c_timestamp) and (p_version=c_version or p_version<c_version) then 'internal-correct'
+when team='external' and latest_time='pre' and pub_user is null and p_timestamp=c_timestamp and p_version=c_version then 'external-NA in public and correct merge'
+when team='external' and latest_time='pub' and pub_timestamp = c_timestamp and pub_version=c_version then 'external-correct'
+when team='external' and latest_time='pub' and pub_timestamp <> c_timestamp and pub_version<>c_version then 'external-incorrect'
+when team='external' and latest_time='same' and pub_timestamp = c_timestamp and pub_version=c_version then 'same-correct'
+end as status
+from (
+select a.id,p_user,p_timestamp,p_version,b.user as pub_user,cast(b.timestamp as date) as pub_timestamp,cast(b.version as int) as pub_version,
+c.user as c_user,cast(c.timestamp as date) as c_timestamp,cast(c.version as int) as c_version,
+case when p_user in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau','mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102','GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106','GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124','GNV125','GNV126','michael123','Michael123','yeni','Iqnaul','Iyan','efdewi','iqnaul','yuri','Kanoksuk Chankon','yun')
+then 'internal' else 'external' end as team,
+case when b.timestamp is not null and p_timestamp > cast(b.timestamp as date) then 'pre'
+when b.timestamp is null then 'pre'
+when b.timestamp is not null and p_timestamp < cast(b.timestamp as date) then 'pub'
+when b.timestamp is not null and p_timestamp = cast(b.timestamp as date) then 'same'
+end as latest_time
+from
+(select id,cast(timestamp as date) as p_timestamp,version as p_version,display_name as p_user
+ from current_merged_all_waysdata
+ where k='highway'
+group by 1,2,3,4) as a
+left join public_all_ways_data as b
+on a.id=b.way_id
+left join mergical_all_ways_data as c
+on a.id=c.way_id
+group by 1,2,3,4,5,6,7,8,9,10,11,12) as a
+) as a
+WHERE status is null
+
+--
+select *,
+case when pub_user is null and p_user=c_user and p_timestamp=c_timestamp and p_version=c_version then 'NA in public and correct merge'
+when pub_user is null and c_user is null then 'NA in public and current'
+end as status
+from (
+select a.id,p_user,p_timestamp,p_version,b.user as pub_user,cast(b.timestamp as date) as pub_timestamp,cast(b.version as int) as pub_version,
+c.user as c_user,cast(c.timestamp as date) as c_timestamp,cast(c.version as int) as c_version,
+case when p_user in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau','mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102','GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106','GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124','GNV125','GNV126','michael123','Michael123','yeni','Iqnaul','Iyan','efdewi','iqnaul','yuri','Kanoksuk Chankon','yun')
+then 'internal' else 'external' end as team,
+case when b.timestamp is not null and p_timestamp > cast(b.timestamp as date) then 'pre'
+when b.timestamp is null then 'pre'
+when b.timestamp is not null and p_timestamp < cast(b.timestamp as date) then 'pub'
+when b.timestamp is not null and p_timestamp = cast(b.timestamp as date) then 'same'
+end as latest_time
+from
+(select id,cast(timestamp as date) as p_timestamp,version as p_version,display_name as p_user
+ from current_merged_all_waysdata
+ WHERE k = 'highway'
+group by 1,2,3,4) as a
+left join public_all_ways_data as b
+on a.id=b.way_id
+left join mergical_all_ways_data as c
+on a.id=c.way_id
+group by 1,2,3,4,5,6,7,8,9,10,11,12) as a
+where team='external' and latest_time = 'pub'
+
+
+
+
+--
+SELECT a.id,a.timestamp as p_timestamp,b.timestamp as pub_timestamp,c.timestamp as m_timestamp,a.version as p_version,b.version as pub_version,
+c.version as m_version,a.display_name as p_user,b.user as pub_user,c.user as m_user FROM 
+(SELECT id,timestamp,version,display_name FROM current_merged_all_waysdata) as a
+LEFT JOIN public_all_ways_data as b ON a.id = b.way_id
+LEFT JOIN mergical_all_ways_data as c ON b.way_id = c.way_id
+GROUP BY 1,2,3,4,5,6,7,8,9,10
+
+
+SELECT * FROM mergical_all_ways_data
+LIMIT 5

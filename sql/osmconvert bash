@@ -1,0 +1,13 @@
+osmconvert /home/lohitd@nextbillion.ai/Downloads/bandung_20210303.osm.pbf >/home/lohitd@nextbillion.ai/Downloads/bandung_20210303.osm
+
+
+
+osmconvert /home/josephn@nextbillion.ai/nbai/OSM/pbf_files/india-latest-internal.osm.pbf -B=/home/josephn@nextbillion.ai/nbai/OSM/Poly_files/Hyderabad_extended.poly --complete-ways >> /home/josephn@nextbillion.ai/nbai/OSM/osm_files/Hyderabad.osm
+	
+
+createdb -U postgres Hyderabad
+psql -U postgres -d Hyderabad -c 'CREATE EXTENSION postgis; CREATE EXTENSION hstore;'
+
+
+osm2pgsql -s -U postgres -W -d Exercise -H localhost --hstore-all --extra-attributes /home/lohitd@nextbillion.ai/Downloads/bandung_20210303.osm
+

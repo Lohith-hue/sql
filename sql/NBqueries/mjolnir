@@ -1,0 +1,139 @@
+--ways
+select count(hstore("tags")-> 'highway') from planet_osm_ways
+Where (hstore("tags")-> 'highway') is not null;
+
+select count(hstore("tags")-> 'lanes') from planet_osm_ways
+Where (hstore("tags")-> 'lanes') is not null;
+
+select count(hstore("tags")-> 'turn:lanes') from planet_osm_ways
+Where (hstore("tags")-> 'turn:lanes') is not null;
+
+select count(hstore("tags")-> 'hgv') from planet_osm_ways
+Where (hstore("tags")-> 'hgv') is not null;
+
+select count(hstore("tags")-> 'hov') from planet_osm_ways
+Where (hstore("tags")-> 'hov') is not null;
+
+select count(hstore("tags")-> 'hazmat') from planet_osm_ways
+Where (hstore("tags")-> 'hazmat') is not null;
+
+
+select count(hstore("tags")-> 'highway') from planet_osm_ways
+where (hstore("tags")-> 'highway') = 'rest_area'
+
+select count(hstore("tags")-> 'amenity') from planet_osm_ways
+where (hstore("tags")-> 'amenity') = 'parking'
+
+select count(hstore("tags")-> 'amenity') from planet_osm_ways
+where (hstore("tags")-> 'amenity') = 'fuel'
+
+select count(hstore("tags")-> 'shop') from planet_osm_ways
+where (hstore("tags")-> 'shop') = 'convenience'
+
+select count(hstore("tags")-> 'maxspeed:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'maxspeed:hgv') is not null;
+
+select count(hstore("tags")-> 'maxheight') from planet_osm_ways
+Where (hstore("tags")-> 'maxheight') is not null;
+
+select count(hstore("tags")-> 'maxheight:physical') from planet_osm_ways
+Where (hstore("tags")-> 'maxheight:physical') is not null;
+
+select count(hstore("tags")-> 'maxheight:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'maxheight:hgv') is not null;
+
+select count(hstore("tags")-> 'maxweight') from planet_osm_ways
+Where (hstore("tags")-> 'maxweight') is not null;
+
+select count(hstore("tags")-> 'maxweightrating:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'maxweightrating:hgv') is not null;
+
+select count(hstore("tags")-> 'maxweightrating') from planet_osm_ways
+Where (hstore("tags")-> 'maxweightrating') is not null;
+
+
+select count(hstore("tags")-> 'maxlength:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'maxlength:hgv') is not null;
+
+
+select count(hstore("tags")-> 'bridge') from planet_osm_ways
+where (hstore("tags")-> 'bridge') = 'yes' and (hstore("tags")-> 'hgv') is not null
+
+select count(hstore("tags")-> 'goods:conditional') from planet_osm_ways
+Where (hstore("tags")-> 'goods:conditional') is not null;
+
+select count(hstore("tags")-> 'hgv:conditional') from planet_osm_ways
+Where (hstore("tags")-> 'hgv:conditional') is not null;
+
+select count(hstore("tags")-> 'incline') from planet_osm_ways
+Where (hstore("tags")-> 'incline') is not null;
+
+select count(hstore("tags")-> 'toll') from planet_osm_ways
+Where (hstore("tags")-> 'toll') is not null;
+
+select count(hstore("tags")-> 'toll:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'toll:hgv') is not null;
+
+select count(hstore("tags")-> 'toll:hov') from planet_osm_ways
+Where (hstore("tags")-> 'toll:hov') is not null;
+
+select count(hstore("tags")-> 'barrier') from planet_osm_ways
+where (hstore("tags")-> 'barrier') = 'toll_booth' 
+
+select count(hstore("tags")-> 'highway') from planet_osm_ways
+where (hstore("tags")-> 'highway') = 'toll_gantry'
+
+select count(hstore("tags")-> 'overtaking:hgv') from planet_osm_ways
+Where (hstore("tags")-> 'overtaking:hgv') is not null;
+
+select count(hstore("tags")-> 'change:lanes') from planet_osm_ways
+Where (hstore("tags")-> 'change:lanes') is not null;
+
+select count(hstore("tags")-> 'surface') from planet_osm_ways
+Where (hstore("tags")-> 'surface') is not null;
+
+select count(hstore("tags")-> 'maxaxleload') from planet_osm_ways
+Where (hstore("tags")-> 'maxaxleload') is not null;
+
+
+--nodes
+select count(hstore("tags")-> 'highway') from planet_osm_point
+where (hstore("tags")-> 'highway') = 'rest_area'
+
+select count(hstore("tags")-> 'amenity') from planet_osm_point
+where (hstore("tags")-> 'amenity') = 'parking'
+
+select count(hstore("tags")-> 'amenity') from planet_osm_point
+where (hstore("tags")-> 'amenity') = 'fuel'
+
+select count(hstore("tags")-> 'shop') from planet_osm_point
+where (hstore("tags")-> 'shop') = 'convenience'
+
+select count(hstore("tags")-> 'highway') from planet_osm_point
+where (hstore("tags")-> 'highway') = 'traffic_signals'
+
+select count(hstore("tags")-> 'highway') from planet_osm_point
+where (hstore("tags")-> 'highway') = 'speed_camera'
+
+select count(hstore("tags")-> 'toll') from planet_osm_point
+Where (hstore("tags")-> 'toll') is not null;
+
+select count(hstore("tags")-> 'toll:hgv') from planet_osm_point
+Where (hstore("tags")-> 'toll:hgv') is not null;
+
+select count(hstore("tags")-> 'toll:hov') from planet_osm_point
+Where (hstore("tags")-> 'toll:hov') is not null;
+
+select count(hstore("tags")-> 'barrier') from planet_osm_point
+where (hstore("tags")-> 'barrier') = 'toll_booth'
+
+select count(hstore("tags")-> 'highway') from planet_osm_point
+where (hstore("tags")-> 'highway') = 'toll_gantry'
+
+--relations
+select count(hstore("tags")-> 'type') from planet_osm_rels
+where hstore("tags")-> 'restriction:hgv' is not null and (hstore("tags")-> 'type')is not null
+
+select count(hstore("tags")-> 'type') from planet_osm_rels
+where hstore("tags")-> 'restriction' is not null and (hstore("tags")-> 'type')is not null
+

@@ -1,0 +1,57 @@
+SELECT final_type,mod_type,internal_f as NB_Team,community_f as community,internal_f+community_f as total
+from(
+select *,max(internal) over (partition by final_type,mod_type) as internal_f,
+max(community) over (partition by final_type,mod_type) as community_f
+from(
+select final_type,mod_type,team,
+case when team='Internal' then count(distinct(final_id)) end as Internal,
+case when team='Community' then count(distinct(final_id)) end as Community from
+	
+(select *,
+case when old_id is null and new_id is not null then new_id
+when new_id is null and old_id is not null then old_id
+when new_id = old_id then new_id
+when new_id != old_id then 0 end as final_id,
+ 
+case when old_type is null and new_type is not null then new_type
+when new_type is null and old_type is not null then old_type
+when new_type = old_type then new_type
+when new_type != old_type then 'diff' end as final_type,
+  
+case when new_displayname in ('sreeram','saisharath','tejan','tejaswini','imtiyaz','hemalatha','ramyau',
+							  'mourya','anil','shradha','sachin','shamili','joseph','GNV101','GNV102',
+							  'GNV104','GNV112','GNV117','Nithish','GNV105','GNV115','GNV111','GNV106',
+							  'GNV114','GNV118','GNV119','GNV120','GNV121','GNV122','GNV123','GNV124',
+							  'GNV125','GNV126','michael123','Michael123','yeni','Iqnaul','Iyan',
+							  'efdewi','iqnaul','yuri','Kanoksuk Chankon','yun') then 'Internal' else 'Community' end as team
+ from
+ (select *,
+ case when (old_visible=false or old_visible is null) and new_visible=true then 'Create'
+when old_visible=true and (new_visible=false or new_visible is null) then 'Delete'
+when old_visible=true and new_visible=true and new_timestamp>old_timestamp then 'Modify'
+when old_visible=true and new_visible=true and cast(new_timestamp as date)=cast(old_timestamp as date) then 'Same'
+when old_visible=true and new_visible=true and daysdiff=1 and old_version=new_version then 'Same'
+end as mod_type
+from
+(select sg_merged_20210504.id as old_id,sg_merged_20210504.visible as old_visible,sg_merged_20210504.timestamp as old_timestamp,
+sg_merged_20210504.version as old_version,sg_merged_20210504.type as old_type,sg_merged_20210504.display_name as old_displayname,
+sg_merged_20210902.id as new_id,sg_merged_20210902.visible as new_visible,sg_merged_20210902.timestamp as new_timestamp,
+sg_merged_20210902.version as new_version,sg_merged_20210902.type as new_type,sg_merged_20210902.display_name as new_displayname,
+abs(date(sg_merged_20210504.timestamp)-date(sg_merged_20210902.timestamp)) as daysdiff from sg_merged_20210504 full outer join 
+sg_merged_20210902 on sg_merged_20210504.id = sg_merged_20210902.id and sg_merged_20210504.type=sg_merged_20210902.type) as old_new)
+  as both_modtype) as c
+Group by 1,2,3) as d) as e
+where mod_type is not null
+Group by 1,2,3,4,5
+
+
+--Create table in old set
+CREATE TABLE sg_merged_20210504 as 
+(select a.*,users.display_name from 
+(SELECT id,visible,timestamp,version,changeset_id,'node' as type FROM current_nodes
+Union
+SELECT id,visible,timestamp,version,changeset_id,'way' as type FROM current_ways
+Union
+SELECT id,visible,timestamp,version,changeset_id,'rels' as type FROM current_relations) as a 
+left join changesets on changesets.id = a.changeset_id
+left join users on changesets.user_id = users.id)

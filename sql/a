@@ -1,0 +1,15 @@
+osm2pgsql -s -U postgres -W -d india_osm_20220218 -H localhost --hstore-all --extra-attributes india-latest.osm
+
+osmosis --rb india-latest.osm.pbf --tf reject-ways highway=* building=* landuse=* natural=* --wb extract_output.osm.pbf omitmetadata=true
+
+osmosis --rb extract_output.osm --tf reject-nodes amenity=* --wb reject_nodes.osm omitmetadata=true
+
+osmosis --rb extract_output.osm --tf reject-ways amenity=* --wb reject_ways.osm  omitmetadata=true
+
+osmosis extract.osm --tf reject-nodes amenity=* reject-ways andreject-nodes extract1.osm
+
+reject-nodes amenity=* reject-ways and reject-nodes
+
+osmconvert extract_outputwithmeta.osm.pbf --complete-ways > extract_output.osm
+
+osmosis --read-xml india-latest.osm.pbf --tf reject-ways highway=* building=* landuse=* natural=* --used-node --write-xml output.osm
